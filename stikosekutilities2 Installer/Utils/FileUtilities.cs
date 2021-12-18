@@ -12,7 +12,7 @@ namespace stikosekutilities2_Installer.Utils
             // Create BrowseFolder Dialog
             VistaFolderBrowserDialog dialog = new()
             {
-                Description = "Select Crab Game folder",
+                Description = "Select Muck folder",
                 ShowNewFolderButton = false
             };
 
@@ -28,10 +28,10 @@ namespace stikosekutilities2_Installer.Utils
         public static string FindGameLocation()
         {
             // Try to get the Game Folder through steam
-            string location = SteamUtils.GetAppLocation(1782210, "Crab Game");
+            string location = SteamUtils.GetAppLocation(1782210, "Muck");
 
             // Fallback to browse the folder
-            if (string.IsNullOrEmpty(location) || !File.Exists(Path.Combine(location, "Crab Game.exe")))
+            if (string.IsNullOrEmpty(location) || !File.Exists(Path.Combine(location, "Muck.exe")))
             {
                 location = BrowseGame();
             }
