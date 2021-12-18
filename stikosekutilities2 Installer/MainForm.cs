@@ -1,10 +1,8 @@
 ﻿using Newtonsoft.Json.Linq;
 using stikosekutilities2_Installer.Utils;
 using System;
-using System.Data;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Windows.Forms;
@@ -21,63 +19,31 @@ namespace stikosekutilities2_Installer
             ReleasesAPI = $"https://api.github.com/repos/{RepoOwner}/{Repository}/releases",
             BepInExURL = "https://github.com/BepInEx/BepInEx/releases/download/v5.4.17/BepInEx_x64_5.4.17.0.zip";
 
+        private const string
+            OriginalLatestVersion = "Latest Version:      {version}",
+            OriginalCurrentVersion = "Current Version:   {version}";
+
         private string
-            _path,
-            _pluginFile;
+            latestVersion,
+            currentVersion;
 
-        private string path
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(_path))
-                {
-                    _path = FileUtilities.FindGameLocation();
-                }
-
-                return _path;
-            }
-        }
-
-        private string pluginFile
-        {
-            get
-            {
-
-                if (string.IsNullOrEmpty(_pluginFile))
-                {
-                    string folder = Path.Combine(path, "BepInEx", "plugins");
-
-                    try
-                    {
-                        _pluginFile = Directory.
-                            GetFiles(folder).
-                            Where(f => AssemblyName.GetAssemblyName(f).Equals("stikosekutilities2")).
-                            First();
-                    }
-                    catch (Exception)
-                    {
-                        Directory.CreateDirectory(folder);
-
-                        _pluginFile = Path.Combine(folder, "stikosekutilities2.dll");
-                    }
-
-                }
-
-                return _pluginFile;
-            }
-        }
         #endregion
 
         public MainForm()
         {
             InitializeComponent();
 
+            if (File.Exists(Paths.PluginFile))
+                currentVersion = AssemblyName.GetAssemblyName(Paths.PluginFile).Version.ToString();
+
             ChangeButton();
+
+            latestVersionLabel.Text = OriginalLatestVersion.Replace("{version}", latestVersion ?? "Not found");
+            currentVersionLabel.Text = OriginalCurrentVersion.Replace("{version}", currentVersion ?? "None");
         }
 
         private void ChangeButton()
         {
-
             if (UpdateAvailable())
             {
                 mainButton.Text = "Update";
@@ -88,17 +54,21 @@ namespace stikosekutilities2_Installer
 
             if (!mainButton.Enabled)
             {
-                mainButton.Text = "Already Installed!";
+                mainButton.Text = "Installed";
+                mainButton.Cursor = Cursors.No;
             }
             else
+            {
                 mainButton.Text = "Install";
+                mainButton.Cursor = Cursors.Hand;
+            }
         }
 
         private bool UpdateAvailable()
         {
             try
             {
-                string plugin = pluginFile;
+                string plugin = Paths.PluginFile;
 
                 if (!File.Exists(plugin))
                     return false;
@@ -110,12 +80,12 @@ namespace stikosekutilities2_Installer
 
                 JArray jArr = JArray.Parse(json);
 
-                string stringVersion = jArr[0].ToObject<JObject>().GetValue("tag_name").ToObject<string>();
+                latestVersion = jArr[0].ToObject<JObject>().GetValue("tag_name").ToObject<string>();
 
                 // Compare GitHub and Local Version
-                Version git = new(stringVersion);
+                Version git = new(latestVersion);
 
-                Version current = AssemblyName.GetAssemblyName(plugin).Version;
+                Version current = new(currentVersion);
 
                 int result = current.CompareTo(git);
 
@@ -138,7 +108,7 @@ namespace stikosekutilities2_Installer
             File.WriteAllBytes(file, rawFile);
         }
 
-        private void DownloadMod() => DownloadFile(DownloadURL, pluginFile);
+        private void DownloadMod() => DownloadFile(DownloadURL, Paths.PluginFile);
 
         private void InstallBepInEx()
         {
@@ -159,12 +129,12 @@ namespace stikosekutilities2_Installer
             ZipFile.ExtractToDirectory(zipFile, zipExtract);
 
             // Copy BepInEx to Game Folder
-            FileUtilities.CopyDir(zipExtract, path);
+            FileUtilities.CopyDir(zipExtract, Paths.Path);
         }
 
-        private bool IsModInstalled() => File.Exists(pluginFile);
+        private bool IsModInstalled() => File.Exists(Paths.PluginFile);
 
-        private bool IsBepInExInstalled() => File.Exists(Path.Combine(path, "BepInEx", "Core", "BepInEx.IL2CPP.dll"));
+        private bool IsBepInExInstalled() => File.Exists(Path.Combine(Paths.Path, "BepInEx", "Core", "BepInEx.IL2CPP.dll"));
 
         private void mainButton_Click(object sender, EventArgs e)
         {

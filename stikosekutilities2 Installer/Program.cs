@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace stikosekutilities2_Installer
@@ -16,6 +13,7 @@ namespace stikosekutilities2_Installer
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+            new MainForm().Show();
             Application.Run();
         }
     }
