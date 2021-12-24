@@ -13,7 +13,7 @@ namespace stikosekutilities2_Installer
     {
         #region Variables
         public const string
-            RepoOwner = "DevPacket",
+            RepoOwner = "Dev-Packet",
             Repository = "stikosekutilities2",
             DownloadURL = $"https://github.com/{RepoOwner}/{Repository}/releases/latest/download/stikosekutilities2.dll",
             ReleasesAPI = $"https://api.github.com/repos/{RepoOwner}/{Repository}/releases",
@@ -91,7 +91,7 @@ namespace stikosekutilities2_Installer
 
                 return result < 0;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return false;
             }
