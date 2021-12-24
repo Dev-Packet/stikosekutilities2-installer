@@ -50,7 +50,6 @@ namespace stikosekutilities2_Installer.Utils
             {
                 string name = Path.GetFileName(file);
 
-                // ADD Unique File Name Check to Below!!!!
                 string dest = Path.Combine(destFolder, name);
                 File.Copy(file, dest, true);
             }

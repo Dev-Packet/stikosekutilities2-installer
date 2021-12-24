@@ -72,7 +72,7 @@
             this.flatLabel1.Name = "flatLabel1";
             this.flatLabel1.Size = new System.Drawing.Size(511, 31);
             this.flatLabel1.TabIndex = 6;
-            this.flatLabel1.Text = "Join the H cult";
+            this.flatLabel1.Text = "Join the H cult or stikosek will kick your ass";
             // 
             // pictureBox1
             // 
