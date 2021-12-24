@@ -70,6 +70,9 @@ namespace stikosekutilities2_Installer
             {
                 string plugin = Paths.PluginFile;
 
+                if (File.Exists(plugin))
+                    currentVersion = AssemblyName.GetAssemblyName(plugin).Version.ToString();
+
                 if (!File.Exists(plugin))
                     return false;
 
@@ -91,7 +94,7 @@ namespace stikosekutilities2_Installer
 
                 return result < 0;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return false;
             }

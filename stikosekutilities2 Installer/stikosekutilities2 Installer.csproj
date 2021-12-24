@@ -8,7 +8,7 @@
     <ProjectGuid>{1B3D17F8-A534-47BF-9E9D-78ADC3F8336E}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>stikosekutilities2_Installer</RootNamespace>
-    <AssemblyName>stikosekutilities2 Installer</AssemblyName>
+    <AssemblyName>stikosekutilities2_Installer</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
