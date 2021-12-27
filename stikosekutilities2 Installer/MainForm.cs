@@ -17,7 +17,7 @@ namespace stikosekutilities2_Installer
             Repository = "stikosekutilities2",
             DownloadURL = $"https://github.com/{RepoOwner}/{Repository}/releases/latest/download/stikosekutilities2.dll",
             ReleasesAPI = $"https://api.github.com/repos/{RepoOwner}/{Repository}/releases",
-            BepInExURL = "https://github.com/BepInEx/BepInEx/releases/download/v5.4.17/BepInEx_x64_5.4.17.0.zip";
+            BepInExURL = "https://github.com/BepInEx/BepInEx/releases/download/v5.4.18/BepInEx_x64_5.4.18.0.zip";
 
         private const string
             OriginalLatestVersion = "Latest Version:      {version}",

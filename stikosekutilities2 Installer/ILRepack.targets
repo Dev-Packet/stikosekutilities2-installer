@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+    <Target Name="ILRepacker" AfterTargets="Build" Condition="'$(Configuration)' == 'Release'">
+        <ItemGroup>
+            <InputAssemblies Include="$(TargetPath)"/>
+            <InputAssemblies Include="@(ReferencePathWithRefAssemblies)" Condition="'%(filename)' == 'Newtonsoft.Json'" />
+            <InputAssemblies Include="@(ReferencePathWithRefAssemblies)" Condition="'%(filename)' == 'Gameloop.Vdf'" />
+            <InputAssemblies Include="@(ReferencePathWithRefAssemblies)" Condition="'%(filename)' == 'Ookii.Dialogs.WinForms'" />
+            <InputAssemblies Include="@(ReferencePathWithRefAssemblies)" Condition="'%(filename)' == 'System.Buffers'" />
+            <InputAssemblies Include="@(ReferencePathWithRefAssemblies)" Condition="'%(filename)' == 'System.Memory'" />
+            <InputAssemblies Include="@(ReferencePathWithRefAssemblies)" Condition="'%(filename)' == 'System.Numerics.Vectors'" />
+            <InputAssemblies Include="@(ReferencePathWithRefAssemblies)" Condition="'%(filename)' == 'System.Resources.Extensions'" />
+            <InputAssemblies Include="@(ReferencePathWithRefAssemblies)" Condition="'%(filename)' == 'System.Runtime.CompilerServices.Unsafe'" />
+            <InputAssemblies Include="@(ReferencePathWithRefAssemblies)" Condition="'%(filename)' == 'FlatUI'" />
+        </ItemGroup>
+
+        <ILRepack
+            AllowDuplicateResources="false"
+            DebugInfo="true"
+            Internalize="true"
+            InputAssemblies="@(InputAssemblies)"
+            OutputFile="$(TargetPath)"
+            Parallel="true"
+            TargetKind="SameAsPrimaryAssembly" />
+    </Target>
+</Project>
