@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using stikosekutilities2_Installer.Utils;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Net;
@@ -17,15 +18,15 @@ namespace stikosekutilities2_Installer
             Repository = "stikosekutilities2",
             DownloadURL = $"https://github.com/{RepoOwner}/{Repository}/releases/latest/download/stikosekutilities2.dll",
             ReleasesAPI = $"https://api.github.com/repos/{RepoOwner}/{Repository}/releases",
-            BepInExURL = "https://github.com/BepInEx/BepInEx/releases/download/v5.4.18/BepInEx_x64_5.4.18.0.zip";
+            BepInExURL = "https://github.com/BepInEx/BepInEx/releases/download/v5.4.19/BepInEx_x64_5.4.19.0.zip";
 
         private const string
             OriginalLatestVersion = "Latest Version:      {version}",
             OriginalCurrentVersion = "Current Version:   {version}";
 
         private string
-            latestVersion,
-            currentVersion;
+            latestVersion = null,
+            currentVersion = null;
 
         #endregion
 
@@ -35,6 +36,8 @@ namespace stikosekutilities2_Installer
 
             if (File.Exists(Paths.PluginFile))
                 currentVersion = AssemblyName.GetAssemblyName(Paths.PluginFile).Version.ToString();
+
+            UpdateAvailable();
 
             ChangeButton();
 
@@ -73,8 +76,6 @@ namespace stikosekutilities2_Installer
                 if (File.Exists(plugin))
                     currentVersion = AssemblyName.GetAssemblyName(plugin).Version.ToString();
 
-                if (!File.Exists(plugin))
-                    return false;
 
                 using var client = new WebClient();
                 // Some random user agent because with others it responds with 403
@@ -85,12 +86,19 @@ namespace stikosekutilities2_Installer
 
                 latestVersion = jArr[0].ToObject<JObject>().GetValue("tag_name").ToObject<string>();
 
+                latestVersionLabel.Text = OriginalLatestVersion.Replace("{version}", latestVersion ?? "Not found");
+                currentVersionLabel.Text = OriginalCurrentVersion.Replace("{version}", currentVersion ?? "None");
+
+                if (!File.Exists(plugin))
+                    return false;
+
                 // Compare GitHub and Local Version
                 Version git = new(latestVersion);
 
                 Version current = new(currentVersion);
 
                 int result = current.CompareTo(git);
+
 
                 return result < 0;
             }
@@ -139,10 +147,24 @@ namespace stikosekutilities2_Installer
 
         private bool IsBepInExInstalled() => File.Exists(Path.Combine(Paths.Path, "BepInEx", "Core", "BepInEx.IL2CPP.dll"));
 
+        private static void KillMuck()
+        {
+            Process[] muckInstances = Process.GetProcessesByName("Muck");
+
+            if(muckInstances != null && muckInstances.Length != 0)
+            {
+                foreach (Process muck in muckInstances)
+                {
+                    muck.Kill();
+                }
+            }
+        }
+
         private void mainButton_Click(object sender, EventArgs e)
         {
             if (!IsBepInExInstalled())
             {
+                KillMuck();
                 InstallBepInEx();
             }
 
@@ -150,6 +172,7 @@ namespace stikosekutilities2_Installer
 
             if (updateAvailable || !IsModInstalled())
             {
+                KillMuck();
                 DownloadMod();
 
                 MessageBox.Show(null, "stikosekutilities2 " + (updateAvailable ? "Updated" : "Installed") + " sucessfully!",
