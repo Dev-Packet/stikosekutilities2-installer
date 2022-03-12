@@ -22,6 +22,8 @@ namespace stikosekutilities2_Installer
         public string Name;
         public SuVersion Version;
 
+        private Version cachedVersion = null;
+
 
         public void Install(string path)
         {
@@ -71,8 +73,11 @@ namespace stikosekutilities2_Installer
                 "Uninstalled successfully", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        public Version GetLatestVersion()
+        public Version GetLatestVersion(bool useCached = true)
         {
+            if (useCached && cachedVersion != null)
+                return cachedVersion;
+
             try
             {
                 using WebClient client = new();
@@ -86,7 +91,7 @@ namespace stikosekutilities2_Installer
                 // Get version tag
                 string stringVersion = jArr[0].ToObject<JObject>().GetValue("tag_name").ToObject<string>();
 
-                return new(stringVersion);
+                return cachedVersion = new(stringVersion);
             } catch(Exception)
             {
                 return null;
@@ -100,7 +105,9 @@ namespace stikosekutilities2_Installer
             if (string.IsNullOrEmpty(path) || !File.Exists(filePath))
                 return null;
 
-            return AssemblyName.GetAssemblyName(filePath).Version;
+            var ver = AssemblyName.GetAssemblyName(filePath).Version;
+
+            return ver;
         }
 
         public bool CheckForUpdate(string path)

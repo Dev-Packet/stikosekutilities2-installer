@@ -74,7 +74,10 @@ namespace stikosekutilities2_Installer.Utils
 
             if (installPath != null)
             {
-                return Path.Combine(installPath, "steamapps", "common", appName ?? GetAppName(appId));
+                string path = Path.Combine(installPath, "steamapps", "common", appName ?? GetAppName(appId));
+
+                if (Directory.Exists(path))
+                    return path;
             }
 
             return null;

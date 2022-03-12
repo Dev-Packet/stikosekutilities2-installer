@@ -28,14 +28,16 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.mainFormSkin = new FlatUI.FormSkin();
+            this.uninstallButton = new System.Windows.Forms.PictureBox();
             this.versionSelectionBox = new FlatUI.FlatComboBox();
             this.currentVersionLabel = new FlatUI.FlatLabel();
             this.latestVersionLabel = new FlatUI.FlatLabel();
             this.flatMini1 = new FlatUI.FlatMini();
             this.flatClose1 = new FlatUI.FlatClose();
             this.mainButton = new FlatUI.FlatButton();
-            this.uninstallButton = new System.Windows.Forms.PictureBox();
+            this.ToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.mainFormSkin.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.uninstallButton)).BeginInit();
             this.SuspendLayout();
@@ -62,6 +64,18 @@
             this.mainFormSkin.Size = new System.Drawing.Size(535, 159);
             this.mainFormSkin.TabIndex = 0;
             this.mainFormSkin.Text = "stikosekutilities2 - Installer";
+            // 
+            // uninstallButton
+            // 
+            this.uninstallButton.BackColor = System.Drawing.Color.Transparent;
+            this.uninstallButton.Image = global::stikosekutilities2_Installer.Properties.Resources.Red_Cross;
+            this.uninstallButton.Location = new System.Drawing.Point(472, 95);
+            this.uninstallButton.Name = "uninstallButton";
+            this.uninstallButton.Size = new System.Drawing.Size(51, 41);
+            this.uninstallButton.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.uninstallButton.TabIndex = 6;
+            this.uninstallButton.TabStop = false;
+            this.uninstallButton.Click += new System.EventHandler(this.UninstallButton_Click);
             // 
             // versionSelectionBox
             // 
@@ -144,18 +158,6 @@
             this.mainButton.UseCustomColor = false;
             this.mainButton.Click += new System.EventHandler(this.MainButton_Click);
             // 
-            // uninstallButton
-            // 
-            this.uninstallButton.BackColor = System.Drawing.Color.Transparent;
-            this.uninstallButton.Image = global::stikosekutilities2_Installer.Properties.Resources.Red_Cross;
-            this.uninstallButton.Location = new System.Drawing.Point(472, 95);
-            this.uninstallButton.Name = "uninstallButton";
-            this.uninstallButton.Size = new System.Drawing.Size(51, 41);
-            this.uninstallButton.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.uninstallButton.TabIndex = 6;
-            this.uninstallButton.TabStop = false;
-            this.uninstallButton.Click += new System.EventHandler(this.UninstallButton_Click);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -183,5 +185,6 @@
         private FlatUI.FlatLabel currentVersionLabel;
         private FlatUI.FlatComboBox versionSelectionBox;
         private System.Windows.Forms.PictureBox uninstallButton;
+        private System.Windows.Forms.ToolTip ToolTip;
     }
 }
