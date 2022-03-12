@@ -218,6 +218,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BepInEx.cs" />
+    <Compile Include="StikosekUtilities.cs" />
     <Compile Include="Utils\FileUtilities.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
@@ -227,8 +229,8 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Utils\Paths.cs" />
     <Compile Include="Utils\SteamUtils.cs" />
+    <Compile Include="SuVersion.cs" />
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -258,7 +260,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\h-apple-apple-h.gif" />
+    <None Include="Resources\Red Cross.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

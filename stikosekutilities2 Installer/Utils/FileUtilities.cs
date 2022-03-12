@@ -25,18 +25,32 @@ namespace stikosekutilities2_Installer.Utils
             return null;
         }
 
-        public static string FindGameLocation()
+        public static string FindGameLocation(bool enableBrowse = true)
         {
             // Try to get the Game Folder through steam
             string location = SteamUtils.GetAppLocation(1782210, "Muck");
 
             // Fallback to browse the folder
-            if (string.IsNullOrEmpty(location) || !File.Exists(Path.Combine(location, "Muck.exe")))
+            if ((string.IsNullOrEmpty(location) || !File.Exists(Path.Combine(location, "Muck.exe"))) && enableBrowse)
             {
                 location = BrowseGame();
             }
 
             return location;
+        }
+
+        public static void SafeDeleteFile(string basePath, string path)
+        {
+            path = Path.Combine(basePath, path);
+            if (File.Exists(path))
+                File.Delete(path);
+        }
+
+        public static void SafeDeleteDirectory(string basePath, string directory, bool recursive)
+        {
+            directory = Path.Combine(basePath, directory);
+            if (Directory.Exists(directory))
+                Directory.Delete(directory, recursive);
         }
 
         public static void CopyDir(string sourceFolder, string destFolder)

@@ -29,15 +29,15 @@
         private void InitializeComponent()
         {
             this.mainFormSkin = new FlatUI.FormSkin();
-            this.flatLabel1 = new FlatUI.FlatLabel();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.versionSelectionBox = new FlatUI.FlatComboBox();
             this.currentVersionLabel = new FlatUI.FlatLabel();
             this.latestVersionLabel = new FlatUI.FlatLabel();
             this.flatMini1 = new FlatUI.FlatMini();
             this.flatClose1 = new FlatUI.FlatClose();
             this.mainButton = new FlatUI.FlatButton();
+            this.uninstallButton = new System.Windows.Forms.PictureBox();
             this.mainFormSkin.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.uninstallButton)).BeginInit();
             this.SuspendLayout();
             // 
             // mainFormSkin
@@ -45,8 +45,8 @@
             this.mainFormSkin.BackColor = System.Drawing.Color.White;
             this.mainFormSkin.BaseColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(70)))), ((int)(((byte)(73)))));
             this.mainFormSkin.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(53)))), ((int)(((byte)(58)))), ((int)(((byte)(60)))));
-            this.mainFormSkin.Controls.Add(this.flatLabel1);
-            this.mainFormSkin.Controls.Add(this.pictureBox1);
+            this.mainFormSkin.Controls.Add(this.uninstallButton);
+            this.mainFormSkin.Controls.Add(this.versionSelectionBox);
             this.mainFormSkin.Controls.Add(this.currentVersionLabel);
             this.mainFormSkin.Controls.Add(this.latestVersionLabel);
             this.mainFormSkin.Controls.Add(this.flatMini1);
@@ -59,38 +59,33 @@
             this.mainFormSkin.HeaderMaximize = false;
             this.mainFormSkin.Location = new System.Drawing.Point(0, 0);
             this.mainFormSkin.Name = "mainFormSkin";
-            this.mainFormSkin.Size = new System.Drawing.Size(535, 410);
+            this.mainFormSkin.Size = new System.Drawing.Size(535, 159);
             this.mainFormSkin.TabIndex = 0;
             this.mainFormSkin.Text = "stikosekutilities2 - Installer";
             // 
-            // flatLabel1
+            // versionSelectionBox
             // 
-            this.flatLabel1.BackColor = System.Drawing.Color.Transparent;
-            this.flatLabel1.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.flatLabel1.ForeColor = System.Drawing.Color.White;
-            this.flatLabel1.Location = new System.Drawing.Point(12, 255);
-            this.flatLabel1.Name = "flatLabel1";
-            this.flatLabel1.Size = new System.Drawing.Size(511, 31);
-            this.flatLabel1.TabIndex = 6;
-            this.flatLabel1.Text = "Join the H cult or stikosek will kick your ass";
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(70)))), ((int)(((byte)(73)))));
-            this.pictureBox1.Image = global::stikosekutilities2_Installer.Properties.Resources.h_apple_apple_h;
-            this.pictureBox1.Location = new System.Drawing.Point(16, 55);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(507, 189);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureBox1.TabIndex = 5;
-            this.pictureBox1.TabStop = false;
+            this.versionSelectionBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.versionSelectionBox.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.versionSelectionBox.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.versionSelectionBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.versionSelectionBox.Font = new System.Drawing.Font("Segoe UI", 8F);
+            this.versionSelectionBox.ForeColor = System.Drawing.Color.White;
+            this.versionSelectionBox.FormattingEnabled = true;
+            this.versionSelectionBox.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(168)))), ((int)(((byte)(109)))));
+            this.versionSelectionBox.ItemHeight = 18;
+            this.versionSelectionBox.Location = new System.Drawing.Point(298, 61);
+            this.versionSelectionBox.Name = "versionSelectionBox";
+            this.versionSelectionBox.Size = new System.Drawing.Size(225, 24);
+            this.versionSelectionBox.TabIndex = 5;
+            this.versionSelectionBox.SelectedIndexChanged += new System.EventHandler(this.VersionSelectionBox_SelectedIndexChanged);
             // 
             // currentVersionLabel
             // 
             this.currentVersionLabel.BackColor = System.Drawing.Color.Transparent;
             this.currentVersionLabel.Font = new System.Drawing.Font("Segoe UI", 12F);
             this.currentVersionLabel.ForeColor = System.Drawing.Color.White;
-            this.currentVersionLabel.Location = new System.Drawing.Point(12, 378);
+            this.currentVersionLabel.Location = new System.Drawing.Point(12, 104);
             this.currentVersionLabel.Name = "currentVersionLabel";
             this.currentVersionLabel.Size = new System.Drawing.Size(242, 23);
             this.currentVersionLabel.TabIndex = 4;
@@ -101,7 +96,7 @@
             this.latestVersionLabel.BackColor = System.Drawing.Color.Transparent;
             this.latestVersionLabel.Font = new System.Drawing.Font("Segoe UI", 12F);
             this.latestVersionLabel.ForeColor = System.Drawing.Color.White;
-            this.latestVersionLabel.Location = new System.Drawing.Point(12, 344);
+            this.latestVersionLabel.Location = new System.Drawing.Point(12, 62);
             this.latestVersionLabel.Name = "latestVersionLabel";
             this.latestVersionLabel.Size = new System.Drawing.Size(242, 23);
             this.latestVersionLabel.TabIndex = 3;
@@ -139,21 +134,33 @@
             this.mainButton.BaseColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(168)))), ((int)(((byte)(109)))));
             this.mainButton.Cursor = System.Windows.Forms.Cursors.Hand;
             this.mainButton.Font = new System.Drawing.Font("Segoe UI", 12F);
-            this.mainButton.Location = new System.Drawing.Point(298, 352);
+            this.mainButton.Location = new System.Drawing.Point(298, 95);
             this.mainButton.Name = "mainButton";
             this.mainButton.Rounded = true;
-            this.mainButton.Size = new System.Drawing.Size(225, 41);
+            this.mainButton.Size = new System.Drawing.Size(168, 41);
             this.mainButton.TabIndex = 0;
             this.mainButton.Text = "Install";
             this.mainButton.TextColor = System.Drawing.Color.FromArgb(((int)(((byte)(243)))), ((int)(((byte)(243)))), ((int)(((byte)(243)))));
             this.mainButton.UseCustomColor = false;
-            this.mainButton.Click += new System.EventHandler(this.mainButton_Click);
+            this.mainButton.Click += new System.EventHandler(this.MainButton_Click);
+            // 
+            // uninstallButton
+            // 
+            this.uninstallButton.BackColor = System.Drawing.Color.Transparent;
+            this.uninstallButton.Image = global::stikosekutilities2_Installer.Properties.Resources.Red_Cross;
+            this.uninstallButton.Location = new System.Drawing.Point(472, 95);
+            this.uninstallButton.Name = "uninstallButton";
+            this.uninstallButton.Size = new System.Drawing.Size(51, 41);
+            this.uninstallButton.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.uninstallButton.TabIndex = 6;
+            this.uninstallButton.TabStop = false;
+            this.uninstallButton.Click += new System.EventHandler(this.UninstallButton_Click);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(535, 410);
+            this.ClientSize = new System.Drawing.Size(535, 159);
             this.Controls.Add(this.mainFormSkin);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "MainForm";
@@ -161,7 +168,7 @@
             this.Text = "MainForm";
             this.TransparencyKey = System.Drawing.Color.Fuchsia;
             this.mainFormSkin.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.uninstallButton)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -174,7 +181,7 @@
         private FlatUI.FlatClose flatClose1;
         private FlatUI.FlatLabel latestVersionLabel;
         private FlatUI.FlatLabel currentVersionLabel;
-        private System.Windows.Forms.PictureBox pictureBox1;
-        private FlatUI.FlatLabel flatLabel1;
+        private FlatUI.FlatComboBox versionSelectionBox;
+        private System.Windows.Forms.PictureBox uninstallButton;
     }
 }

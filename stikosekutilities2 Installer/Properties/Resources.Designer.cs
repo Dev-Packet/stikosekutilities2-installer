@@ -63,9 +63,9 @@ namespace stikosekutilities2_Installer.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap h_apple_apple_h {
+        internal static System.Drawing.Bitmap Red_Cross {
             get {
-                object obj = ResourceManager.GetObject("h_apple_apple_h", resourceCulture);
+                object obj = ResourceManager.GetObject("Red_Cross", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

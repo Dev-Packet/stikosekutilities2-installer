@@ -1,11 +1,8 @@
-﻿using Newtonsoft.Json.Linq;
-using stikosekutilities2_Installer.Utils;
+﻿using stikosekutilities2_Installer.Utils;
 using System;
-using System.Diagnostics;
-using System.IO;
-using System.IO.Compression;
-using System.Net;
-using System.Reflection;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace stikosekutilities2_Installer
@@ -13,173 +10,170 @@ namespace stikosekutilities2_Installer
     public partial class MainForm : Form
     {
         #region Variables
-        public const string
-            RepoOwner = "Dev-Packet",
-            Repository = "stikosekutilities2",
-            DownloadURL = $"https://github.com/{RepoOwner}/{Repository}/releases/latest/download/stikosekutilities2.dll",
-            ReleasesAPI = $"https://api.github.com/repos/{RepoOwner}/{Repository}/releases",
-            BepInExURL = "https://github.com/BepInEx/BepInEx/releases/download/v5.4.19/BepInEx_x64_5.4.19.0.zip";
-
         private const string
             OriginalLatestVersion = "Latest Version:      {version}",
             OriginalCurrentVersion = "Current Version:   {version}";
 
-        private string
-            latestVersion = null,
-            currentVersion = null;
+        private readonly List<StikosekUtilities> suVersions;
 
+        private StikosekUtilities selectedVersion;
+
+        private string muckPath;
+        private bool lockButton;
         #endregion
 
         public MainForm()
         {
             InitializeComponent();
 
-            if (File.Exists(Paths.PluginFile))
-                currentVersion = AssemblyName.GetAssemblyName(Paths.PluginFile).Version.ToString();
+            muckPath = FileUtilities.FindGameLocation(false);
 
-            UpdateAvailable();
+            // Populate Versions
+            suVersions = new List<StikosekUtilities>
+            {
+                new StikosekUtilities()
+                {
+                    FileName = "stikosekutilities2.dll",
+                    Name = "StikosekUtilities2",
+                    Owner = "Dev-Packet",
+                    Repo = "stikosekutilities2",
+                    Version = SuVersion.Su2,
+                },
+                new StikosekUtilities()
+                {
+                    EnableAutoUpdate = false,
+                    FileName = "stikosekutilitites.dll",
+                    Name = "StikosekUtilities 1.2(Remastered)",
+                    Owner = "stikosek",
+                    Repo = "stikosekutilities",
+                    Version = SuVersion.Su_Remastered,
+                }
+            };
 
-            ChangeButton();
+            versionSelectionBox.Items.Clear();
+            foreach(string versionString in suVersions.Select(ver => ver.Name))
+            {
+                versionSelectionBox.Items.Add(versionString);
+            }
+            versionSelectionBox.SelectedIndex = 0;
+
+            UpdateTexts();
+        }
+
+        private void ResizeButtons(bool showUninstall)
+        {
+            uninstallButton.Visible = showUninstall;
+
+            if(!showUninstall)
+                // Bigger Button
+                mainButton.Size = new Size(225, 41);
+            else
+                // Smaller Button
+                mainButton.Size = new Size(168, 41);
+            
+            mainButton.Location = new Point(298, 95);
+        }
+
+        private void UpdateTexts()
+        {
+
+            string
+                latestVersion = "",
+                currentVersion = "";
+
+            bool
+                installed = false,
+                updateAvailable = false;
+
+            if(!selectedVersion.EnableAutoUpdate)
+            {
+                if(selectedVersion.Version == SuVersion.Su_Remastered)
+                {
+                    latestVersion = "1.2";
+                    currentVersion = latestVersion;
+                }
+            } else
+            {
+                Version ver;
+                ver = selectedVersion.GetLatestVersion();
+
+                if (ver != null)
+                    latestVersion = ver.ToString();
+
+                ver = selectedVersion.GetInstalledVersion(muckPath);
+
+                if(ver != null)
+                { 
+                    currentVersion = ver.ToString();
+                    installed = true;
+                }
+
+                updateAvailable = selectedVersion.CheckForUpdate(muckPath);
+            }
 
             latestVersionLabel.Text = OriginalLatestVersion.Replace("{version}", latestVersion ?? "Not found");
             currentVersionLabel.Text = OriginalCurrentVersion.Replace("{version}", currentVersion ?? "None");
-        }
 
-        private void ChangeButton()
-        {
-            if (UpdateAvailable())
+            if(updateAvailable)
             {
                 mainButton.Text = "Update";
+                lockButton = false;
+                mainButton.Cursor = Cursors.Hand;
+                ResizeButtons(true);
                 return;
             }
 
-            mainButton.Enabled = !IsModInstalled();
-
-            if (!mainButton.Enabled)
+            if(installed)
             {
                 mainButton.Text = "Installed";
+                lockButton = true;
                 mainButton.Cursor = Cursors.No;
-            }
-            else
+                ResizeButtons(true);
+            } else
             {
                 mainButton.Text = "Install";
+                lockButton = false;
                 mainButton.Cursor = Cursors.Hand;
+                ResizeButtons(false);
             }
+
         }
 
-        private bool UpdateAvailable()
+        private void VersionSelectionBox_SelectedIndexChanged(object sender, System.EventArgs e)
         {
-            try
-            {
-                string plugin = Paths.PluginFile;
-
-                if (File.Exists(plugin))
-                    currentVersion = AssemblyName.GetAssemblyName(plugin).Version.ToString();
-
-
-                using var client = new WebClient();
-                // Some random user agent because with others it responds with 403
-                client.Headers.Add("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:93.0) Gecko/20100101 Firefox/93.0");
-                string json = client.DownloadString(ReleasesAPI);
-
-                JArray jArr = JArray.Parse(json);
-
-                latestVersion = jArr[0].ToObject<JObject>().GetValue("tag_name").ToObject<string>();
-
-                latestVersionLabel.Text = OriginalLatestVersion.Replace("{version}", latestVersion ?? "Not found");
-                currentVersionLabel.Text = OriginalCurrentVersion.Replace("{version}", currentVersion ?? "None");
-
-                if (!File.Exists(plugin))
-                    return false;
-
-                // Compare GitHub and Local Version
-                Version git = new(latestVersion);
-
-                Version current = new(currentVersion);
-
-                int result = current.CompareTo(git);
-
-
-                return result < 0;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
+            selectedVersion = suVersions[versionSelectionBox.SelectedIndex];
         }
 
-        private void DownloadFile(string url, string file)
+
+        private void MainButton_Click(object sender, EventArgs e)
         {
-            using var client = new WebClient();
+            if (string.IsNullOrEmpty(muckPath))
+                muckPath = FileUtilities.FindGameLocation();
 
-            byte[] rawFile = client.DownloadData(url);
+            if (string.IsNullOrEmpty(muckPath))
+                return;
 
-            Directory.CreateDirectory(Path.GetDirectoryName(file));
-
-            File.WriteAllBytes(file, rawFile);
-        }
-
-        private void DownloadMod() => DownloadFile(DownloadURL, Paths.PluginFile);
-
-        private void InstallBepInEx()
-        {
-            // File variables
-            string
-                tempFolder = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString()),
-                zipExtract = Path.Combine(tempFolder, "Extracted"),
-                zipFile = Path.Combine(tempFolder + "BepInEx.zip");
-
-            // Create TempFolders
-            Directory.CreateDirectory(tempFolder);
-            Directory.CreateDirectory(zipExtract);
-
-            // Download BepInEx
-            DownloadFile(BepInExURL, zipFile);
-
-            // Extract BepInEx
-            ZipFile.ExtractToDirectory(zipFile, zipExtract);
-
-            // Copy BepInEx to Game Folder
-            FileUtilities.CopyDir(zipExtract, Paths.Path);
-        }
-
-        private bool IsModInstalled() => File.Exists(Paths.PluginFile);
-
-        private bool IsBepInExInstalled() => File.Exists(Path.Combine(Paths.Path, "BepInEx", "Core", "BepInEx.IL2CPP.dll"));
-
-        private static void KillMuck()
-        {
-            Process[] muckInstances = Process.GetProcessesByName("Muck");
-
-            if(muckInstances != null && muckInstances.Length != 0)
+            if (lockButton)
             {
-                foreach (Process muck in muckInstances)
-                {
-                    muck.Kill();
-                }
-            }
-        }
-
-        private void mainButton_Click(object sender, EventArgs e)
-        {
-            if (!IsBepInExInstalled())
-            {
-                KillMuck();
-                InstallBepInEx();
+                UpdateTexts();
+                return;
             }
 
-            var updateAvailable = UpdateAvailable();
-
-            if (updateAvailable || !IsModInstalled())
-            {
-                KillMuck();
-                DownloadMod();
-
-                MessageBox.Show(null, "stikosekutilities2 " + (updateAvailable ? "Updated" : "Installed") + " sucessfully!",
-                    "Installed", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-
-            ChangeButton();
+            selectedVersion.Install(muckPath);
+            UpdateTexts();
         }
+
+        private void UninstallButton_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(muckPath))
+                muckPath = FileUtilities.FindGameLocation();
+
+            if (string.IsNullOrEmpty(muckPath))
+                return;
+
+            selectedVersion.Uninstall(muckPath);
+            UpdateTexts();
+        }
+
     }
 }
