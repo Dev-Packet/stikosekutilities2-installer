@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Target Name="ILRepacker" AfterTargets="Build" Condition="'$(Configuration)' == 'Release'">
+
+    <ItemGroup>
+        <InputAssemblies Include="$(OutputPath)\$(AssemblyName).exe"/>
+        <InputAssemblies Include="$(OutputPath)\Pastel.dll"/>
+        <InputAssemblies Include="$(OutputPath)\Newtonsoft.Json.dll"/>
+        <InputAssemblies Include="$(OutputPath)\Gameloop.Vdf.dll"/>
+    </ItemGroup>
+
+    <ILRepack
+        Parallel="true"
+        Internalize="true"
+        InputAssemblies="@(InputAssemblies)"
+        TargetKind="Exe"
+        OutputFile="$(OutputPath)\$(AssemblyName).exe"
+    />
+
+    </Target>
+</Project>
+<!-- /ILRepack -->
